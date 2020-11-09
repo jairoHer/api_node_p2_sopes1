@@ -3,12 +3,22 @@ const express = require('express');
 //const mongo = require('mongodb'); 
 const app = express();
 const mongo = require('mongodb').MongoClient
+const redis = require("redis");
+//const client = redis.createClient(6379,'localhost');
+const client = redis.createClient(6379,'35.190.182.75');
 
-const url = 'mongodb://localhost:27017'
+//const url = 'mongodb://localhost:27017'
+const url = 'mongodb://35.190.182.75:27017'
 
 var infoTodos;
 var infoTop3;
 var topEdades;
+var ultimoRedis;
+var ultimoElementoRedis;
+
+client.on('connect', function() {
+  console.log('Redis client connected');
+  });
 
 function apitop3(){
     mongo.connect(url, {
@@ -142,7 +152,28 @@ setInterval(function(){
       })
 
     })
+    client.scard('persona',function(err,res){
+      //console.log(res);
+      ultimoRedis = res;
+    });
+    if (typeof ultimoRedis =='undefined'){
+      console.log("es indefinido")
+    }else{
+      client.hvals('persona:'+ultimoRedis.toString(),function(err,res){
+        console.log(res);
+        ultimoElementoRedis = res;
+      })
+    }
+    /*client.hvals('persona:8',function(err,res){
+      console.log(res);
+    })*/
+    console.log(ultimoRedis)
 },5000)
+
+app.get('/ultimo',(req,res)=>{
+  res.header("Access-Control-Allow-Origin", "*");
+  res.json(ultimoElementoRedis);
+})
 
 app.get('/',(req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
