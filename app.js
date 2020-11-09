@@ -168,7 +168,7 @@ setInterval(function(){
       console.log(res);
     })*/
     console.log(ultimoRedis)
-},5000)
+},4000)
 
 app.get('/ultimo',(req,res)=>{
   res.header("Access-Control-Allow-Origin", "*");
