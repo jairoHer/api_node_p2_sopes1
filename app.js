@@ -123,7 +123,8 @@ setInterval(function(){
                   "cantidad_infectados": { "$sum": 1 }
               }
           },
-          { "$sort": { "cantidad_infectados": -1 } }
+          { "$sort": { "cantidad_infectados": -1 } },
+          { "$limit": 15 }
         ]).toArray((err,items)=>{
             infoTodos = items;
             //console.log("dentro de la funcion flecha");
